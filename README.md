@@ -1,2 +1,2 @@
-# Task-Manager-Go-App-
+# Task Manager (Go App)
 Go (Gin) Playground Project
