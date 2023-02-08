@@ -3,6 +3,7 @@ package main
 import (
 	"server/config"
 	db "server/database"
+	service "server/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,6 +15,13 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	emailQueue := service.NewRedisQueue("emailQueue")
+	notificationQueue := service.NewRedisQueue("notificationQueue")
+
+	go func() {
+		emailQueue.Set("item1")
+		notificationQueue.Set("item2")
+	}()
 
 	r.Run()
 }
