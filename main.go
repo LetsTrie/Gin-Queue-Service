@@ -1,25 +1,20 @@
 package main
 
 import (
-	"server/controllers"
-	"server/initializers"
+	"server/config"
+	db "server/database"
 
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	initializers.LoadEnvVariables()
+	config.Init()
+	db.ConnectRedis()
 }
 
+// ~HOME/go/bin/CompileDaemon -command="go run main.go"
 func main() {
-	// Initialize Gin router
 	r := gin.Default()
-	
-	// Define route handlers
-	r.GET("/tasks", controllers.GetTasks)
-	r.GET("/tasks/:id", controllers.GetTask)
-	r.POST("/tasks", controllers.CreateTask)
-	
-	// Start server
+
 	r.Run()
 }
