@@ -12,9 +12,10 @@ func init() {
 	db.ConnectRedis()
 }
 
-// ~HOME/go/bin/CompileDaemon -command="go run main.go"
 func main() {
 	r := gin.Default()
 
 	r.Run()
 }
+
+// ~HOME/go/bin/CompileDaemon -command="go run main.go"

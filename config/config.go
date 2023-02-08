@@ -9,7 +9,7 @@ import (
 )
 
 type config struct {
-	Port    			string `validate:"required"`
+	Port          string `validate:"required"`
 	RedisHost     string `validate:"required"`
 	RedisPassword string `validate:"required"`
 }
@@ -19,12 +19,12 @@ var Env config
 func Init() {
 	err := godotenv.Load()
 
-	if(err != nil) {
+	if err != nil {
 		log.Fatal("Error loading .env file!")
 	}
 
 	Env = config{
-		Port:					 os.Getenv("PORT"),
+		Port:          os.Getenv("PORT"),
 		RedisHost:     os.Getenv("REDIS_HOST"),
 		RedisPassword: os.Getenv("REDIS_PASSWORD"),
 	}
