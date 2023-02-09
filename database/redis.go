@@ -13,7 +13,7 @@ import (
 var RedisClient *redis.Client
 var ctx = context.Background()
 
-func ConnectRedis() {
+func RedisConfig() {
 	const maxRetries = 3
 	const retryInterval = 3
 	var retryCount int

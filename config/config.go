@@ -9,9 +9,10 @@ import (
 )
 
 type config struct {
-	Port          string `validate:"required"`
-	RedisHost     string `validate:"required"`
-	RedisPassword string `validate:"required"`
+	Port            string `validate:"required"`
+	RedisHost       string `validate:"required"`
+	RedisPassword   string `validate:"required"`
+	FirebaseAuthKey string `validate:"required"`
 }
 
 var Env config
@@ -24,9 +25,10 @@ func Init() {
 	}
 
 	Env = config{
-		Port:          os.Getenv("PORT"),
-		RedisHost:     os.Getenv("REDIS_HOST"),
-		RedisPassword: os.Getenv("REDIS_PASSWORD"),
+		Port:            os.Getenv("PORT"),
+		RedisHost:       os.Getenv("REDIS_HOST"),
+		RedisPassword:   os.Getenv("REDIS_PASSWORD"),
+		FirebaseAuthKey: os.Getenv("FIREBASE_AUTH_KEY"),
 	}
 
 	validate := validator.New()
