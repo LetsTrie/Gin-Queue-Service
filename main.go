@@ -25,8 +25,8 @@ func main() {
 	notificationQueue := service.NewRedisQueue("notificationQueue")
 
 	go func() {
-		emailQueue.Set("item1")
-		notificationQueue.Set("item2")
+		emailQueue.Set("Gentle Breezes 🌬️")
+		notificationQueue.Set("Peaceful Waters 🌊")
 	}()
 
 	router.GET("/", func(c *gin.Context) {
