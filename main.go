@@ -16,7 +16,7 @@ func init() {
 	fcm.FcmConfig()
 }
 
-var userId string = "63ba96fe96202297db352f7c"
+const userId string = "63ba96fe96202297db352f7c"
 
 func main() {
 	router := gin.Default()
