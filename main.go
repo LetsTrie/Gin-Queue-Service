@@ -18,26 +18,18 @@ func init() {
 }
 
 func main() {
+	// we are creating a done channel and deferring its closure.
+	// We are then passing this channel to the ManageQueue() function,
+	// which will use it to gracefully stop consuming messages when the channel is closed.
 
-	// Connect to RabbitMQ server
-	rmq, err := service.NewRabbitMQ(config.Env.RabbitMqUrl)
+	forever := make(chan struct{})
+	defer close(forever)
+
+	err := service.ManageQueue("task", forever)
+
 	if err != nil {
-		log.Fatalf("Failed to connect to RabbitMQ: %s", err)
+		log.Fatalf("Failed to manage queue: %s", err)
 	}
-	defer rmq.Close()
-
-	// Declare a queue for notifications
-	notificationQueueName := "task"
-	err = rmq.DeclareQueue(notificationQueueName)
-	if err != nil {
-		log.Fatalf("Failed to declare a queue: %s", err)
-	}
-
-	// Start consuming messages from the notification queue in a goroutine
-	// Start consuming messages from the notification queue in a goroutine
-	notificationChan := make(chan struct{})
-	defer close(notificationChan)
-	go rmq.ConsumeMessages("task", "notification-consumer", handleNotification, notificationChan)
 
 	// Set up HTTP server
 	router := gin.Default()
@@ -47,9 +39,4 @@ func main() {
 		})
 	})
 	router.Run()
-}
-
-// handleNotification is a function that handles a notification message received from a queue.
-func handleNotification(message []byte) {
-	log.Printf("Received notification message: %s", message)
 }
