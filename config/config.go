@@ -13,6 +13,7 @@ type config struct {
 	RedisHost       string `validate:"required"`
 	RedisPassword   string `validate:"required"`
 	FirebaseAuthKey string `validate:"required"`
+	RabbitMqUrl     string `validate:"required"`
 }
 
 var Env config
@@ -29,6 +30,7 @@ func Init() {
 		RedisHost:       os.Getenv("REDIS_HOST"),
 		RedisPassword:   os.Getenv("REDIS_PASSWORD"),
 		FirebaseAuthKey: os.Getenv("FIREBASE_AUTH_KEY"),
+		RabbitMqUrl:     os.Getenv("RABBITMQ_URL"),
 	}
 
 	validate := validator.New()

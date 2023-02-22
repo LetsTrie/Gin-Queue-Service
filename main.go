@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
 	"net/http"
-	"server/config"
-	db "server/database"
+	config "server/config"
+	database "server/database"
 	service "server/services"
 	fcm "server/services/fcm"
 
@@ -12,38 +13,43 @@ import (
 
 func init() {
 	config.Init()
-	db.RedisConfig()
+	database.RedisConfig()
 	fcm.FcmConfig()
 }
 
-const userId string = "63ba96fe96202297db352f7c"
-
 func main() {
+
+	// Connect to RabbitMQ server
+	rmq, err := service.NewRabbitMQ(config.Env.RabbitMqUrl)
+	if err != nil {
+		log.Fatalf("Failed to connect to RabbitMQ: %s", err)
+	}
+	defer rmq.Close()
+
+	// Declare a queue for notifications
+	notificationQueueName := "task"
+	err = rmq.DeclareQueue(notificationQueueName)
+	if err != nil {
+		log.Fatalf("Failed to declare a queue: %s", err)
+	}
+
+	// Start consuming messages from the notification queue in a goroutine
+	// Start consuming messages from the notification queue in a goroutine
+	notificationChan := make(chan struct{})
+	defer close(notificationChan)
+	go rmq.ConsumeMessages("task", "notification-consumer", handleNotification, notificationChan)
+
+	// Set up HTTP server
 	router := gin.Default()
-
-	emailQueue := service.NewRedisQueue("emailQueue")
-	notificationQueue := service.NewRedisQueue("notificationQueue")
-
-	go func() {
-		emailQueue.Set("Gentle Breezes 🌬️")
-		notificationQueue.Set("Peaceful Waters 🌊")
-	}()
-
 	router.GET("/", func(c *gin.Context) {
-		message := &fcm.MulticastMessage{
-			Notification: &fcm.Notification{
-				Title: "🔥 Rock On 🎸",
-				Body:  "Get ready to rock with our latest update 🤘",
-			},
-		}
-
-		fcm.SendPushNotificationToUser(userId, message)
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Welcome to Gin Queue Service!",
 		})
 	})
-
 	router.Run()
 }
 
-// ~HOME/go/bin/CompileDaemon -command="go run main.go"
+// handleNotification is a function that handles a notification message received from a queue.
+func handleNotification(message []byte) {
+	log.Printf("Received notification message: %s", message)
+}
